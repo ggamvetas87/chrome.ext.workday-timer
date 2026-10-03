@@ -212,6 +212,17 @@ button.secondary:hover {
   background: #f5f5f5;
 }
 
+button.destructive {
+  background: transparent;
+  border: 1px solid #cc0000;
+  color: #cc0000;
+}
+
+button.destructive:hover {
+  background: #cc0000;
+  color: #fff;
+}
+
 .popup {
   position: relative;
   min-width: 320px;

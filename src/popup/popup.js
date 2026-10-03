@@ -292,7 +292,7 @@ async function calculate() {
     clockOut: clockOutTimestamp
   });
 
-  await renderTimer(clockOutTimestamp);
+  renderTimer(clockOutTimestamp);
 
   await chrome.runtime.sendMessage({
     type: "SCHEDULE_REMINDERS",
@@ -745,6 +745,20 @@ if (startNowButton instanceof HTMLButtonElement && timeInput instanceof HTMLInpu
     timeInput.dispatchEvent(new Event("input", { bubbles: true }));
     timeInput.focus();
     void calculate();
+
+    // Send a message to the active tab to trigger the check-in action
+    // Used for triggering the HRMS Hub ClockIn / CheckIn for myErgani
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const [activeTab] = tabs;
+
+      if (!activeTab?.id) return;
+
+      chrome.tabs.sendMessage(activeTab.id, { type: "CLICK_CHECKIN" }, () => {
+        if (chrome.runtime.lastError) {
+          console.error(chrome.runtime.lastError.message);
+        }
+      });
+    });
   });
 }
 

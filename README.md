@@ -66,3 +66,28 @@ The extension uses `chrome.storage.local` to persist:
 
 - The extension relies on Chrome alarms and an offscreen document for audio playback.
 - Reminder alerts are rescheduled automatically when settings change.
+
+## HRMS / myErgani integration
+
+The extension can also interact with your Company's HRHub page:
+
+- When **Start now** is clicked in the extension, the current time is written to the start-time input
+- The extension can trigger the HRHub **Check In / In** button automatically on:
+  - `https://<HRMS_HUB_URL>/`
+- This is done through a content script that listens for a message from the extension popup
+- If the HRHub button is not available yet, the page may need to finish loading before the click is triggered
+
+### Notes
+
+- The extension must be reloaded after manifest changes
+- The HRHub page must be refreshed after installing the content script
+- The page must match the extension host permissions and content script match rules
+
+### Important
+
+- You must also update `manifest.json` with your HRMS hub URL in:
+  - `host_permissions`
+  - `content_scripts.matches`
+- Replace `https://<HRMS_HUB_URL>/` with the real HRMS hub URL before using the integration.
+- The extension must be reloaded after manifest changes.
+- The HRHub page must be refreshed after installing the content script.
