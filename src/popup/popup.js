@@ -52,7 +52,8 @@ const SOUND_OPTIONS = [
   { value: "src/assets/sounds/spongebob-fail.mp3", label: "Spongebob Fail" },
   { value: "src/assets/sounds/stamataaaaaaa.mp3", label: "Stamataaaaaaa" },
   { value: "src/assets/sounds/taco-bell-bong-sfx.mp3", label: "Taco Bell Bong SFX" },
-  { value: "src/assets/sounds/ti-les-more-maimou-tou-pharao.mp3", label: "Ti Les More Maimou Tou Pharao" }
+  { value: "src/assets/sounds/ti-les-more-maimou-tou-pharao.mp3", label: "Ti Les More Maimou Tou Pharao" },
+  { value: "src/assets/sounds/snoop-dog.mp3", label: "Snoop Dog" }
 ];
 
 const backButton = document.getElementById("back-button");
