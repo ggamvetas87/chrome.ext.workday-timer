@@ -252,3 +252,24 @@ button.secondary:hover {
   align-items: center;
   justify-content: center;
 }
+
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.clear-button {
+  width: 20px;
+  height: 20px;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  line-height: 1;
+  font-size: 14px;
+  position: absolute;
+  margin: 0;
+  right: 6px;
+  z-index: 1000;
+}

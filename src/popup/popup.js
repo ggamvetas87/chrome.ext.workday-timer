@@ -1,4 +1,17 @@
 const timeInput = document.getElementById("time");
+const clearTimeButton = document.getElementById("clear-time");
+
+const workDurationInput = document.getElementById("workDuration");
+const clearWorkDurationButton = document.getElementById("clear-work-duration");
+
+const reminder30Input = document.getElementById("reminder30Minutes");
+const clearReminder30Button = document.getElementById("clear-reminder30");
+
+const reminder10Input = document.getElementById("reminder10Minutes");
+const clearReminder10Button = document.getElementById("clear-reminder10");
+
+const ringSoundSelect = document.getElementById("ringSound");
+
 const calculateButton = document.getElementById("calculate");
 const startNowButton = document.getElementById("start-now");
 const resetButton = document.getElementById("reset");
@@ -12,6 +25,7 @@ const reminder30 = document.getElementById("reminder30");
 const reminder10 = document.getElementById("reminder10");
 const reminder30Label = document.getElementById("reminder30Label");
 const reminder10Label = document.getElementById("reminder10Label");
+
 const popupStatus = document.getElementById("popup-status");
 const reminderStatus = document.getElementById("reminder-status");
 
@@ -42,10 +56,6 @@ const SOUND_OPTIONS = [
 ];
 
 const backButton = document.getElementById("back-button");
-const reminder30Input = document.getElementById("reminder30Minutes");
-const reminder10Input = document.getElementById("reminder10Minutes");
-const workDurationInput = document.getElementById("workDuration");
-const ringSoundSelect = document.getElementById("ringSound");
 const previewRingSoundButton = document.getElementById("preview-ring-sound");
 const settingsButton = document.getElementById("settings-button");
 const settingsForm = document.getElementById("settings-form");
@@ -399,13 +409,19 @@ if (
 }
 
 function showSettingsView() {
-  if (mainView) mainView.classList.add("hidden");
-  if (settingsView) settingsView.classList.remove("hidden");
+  if (mainView instanceof HTMLElement) mainView.classList.add("hidden");
+  if (settingsView instanceof HTMLElement) settingsView.classList.remove("hidden");
+  updateStartNowVisibility();
 }
 
 function showMainView() {
-  if (settingsView) settingsView.classList.add("hidden");
-  if (mainView) mainView.classList.remove("hidden");
+  if (settingsView instanceof HTMLElement) settingsView.classList.add("hidden");
+  if (mainView instanceof HTMLElement) mainView.classList.remove("hidden");
+  updateStartNowVisibility();
+}
+
+if (settingsButton instanceof HTMLButtonElement) {
+  settingsButton.addEventListener("click", showSettingsView);
 }
 
 async function loadReminderSettings(reminder30Input, reminder10Input) {
@@ -770,3 +786,52 @@ attachFormattedTimeInput(timeInput, () => {
 
 // Add this for work duration too:
 attachFormattedTimeInput(workDurationInput);
+
+document.addEventListener("DOMContentLoaded", () => {
+  bindClearButton(timeInput, clearTimeButton);
+  bindClearButton(workDurationInput, clearWorkDurationButton);
+  bindClearButton(reminder30Input, clearReminder30Button);
+  bindClearButton(reminder10Input, clearReminder10Button);
+
+  syncClearButtonVisibility(timeInput, clearTimeButton);
+  syncClearButtonVisibility(workDurationInput, clearWorkDurationButton);
+  syncClearButtonVisibility(reminder30Input, clearReminder30Button);
+  syncClearButtonVisibility(reminder10Input, clearReminder10Button);
+});
+
+function bindClearButton(input, button) {
+  if (!(input instanceof HTMLInputElement)) return;
+  if (!(button instanceof HTMLButtonElement)) return;
+
+  syncClearButtonVisibility(input, button);
+
+  input.addEventListener("input", () => {
+    syncClearButtonVisibility(input, button);
+  });
+
+  button.addEventListener("click", () => {
+    if (input.value.trim() === "") return;
+
+    clearInput(input, button);
+  });
+}
+
+function syncClearButtonVisibility(input, button) {
+  if (!(input instanceof HTMLInputElement)) return;
+  if (!(button instanceof HTMLButtonElement)) return;
+
+  button.hidden = input.value.trim() === "";
+}
+
+function clearInput(input, button) {
+  if (!(input instanceof HTMLInputElement)) return;
+
+  input.value = "";
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+
+  if (button instanceof HTMLButtonElement) {
+    button.hidden = true;
+  }
+
+  input.focus();
+}

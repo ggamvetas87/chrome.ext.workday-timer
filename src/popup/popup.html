@@ -24,17 +24,23 @@
     <section id="main-view">
       <h1>Workday Timer</h1>
 
-      <label for="time">Start time / Clock-in</label>
-
-      <input
-        id="time"
-        type="text"
-        inputmode="numeric"
-        placeholder="08:30"
-        maxlength="5"
-        autocomplete="off"
-        autofocus
-      />
+      <div class="field with-clear">
+        <label for="time">Start time / Clock-in</label>
+        <div class="input-row">
+          <input
+            id="time"
+            type="text"
+            inputmode="numeric"
+            placeholder="08:30"
+            maxlength="5"
+            autocomplete="off"
+            autofocus
+          />
+          <button id="clear-time" type="button" class="clear-button" aria-label="Clear start time" hidden>
+            ×
+          </button>
+        </div>
+      </div>
 
       <div class="actions">
         <button id="calculate" type="button">Calculate</button>
@@ -97,25 +103,72 @@
       <form id="settings-form">
         <div class="field">
           <label for="workDuration">Work duration (HH:MM)</label>
-          <input
-            id="workDuration"
-            type="text"
-            inputmode="numeric"
-            placeholder="08:30"
-            maxlength="5"
-            autocomplete="off"
-            required
-          />
+          <div class="input-row">
+            <input
+              id="workDuration"
+              type="text"
+              inputmode="numeric"
+              placeholder="08:30"
+              maxlength="5"
+              autocomplete="off"
+              required
+            />
+            <button
+              id="clear-work-duration"
+              type="button"
+              class="clear-button"
+              aria-label="Clear work duration"
+              hidden
+            >
+              ×
+            </button>
+          </div>
         </div>
-        
+
         <div class="field">
           <label for="reminder30Minutes">First reminder threshold (minutes)</label>
-          <input id="reminder30Minutes" type="number" min="1" step="1" placeholder="30m" required />
+          <div class="input-row">
+            <input
+              id="reminder30Minutes"
+              type="number"
+              min="1"
+              step="1"
+              placeholder="30m"
+              required
+            />
+            <button
+              id="clear-reminder30"
+              type="button"
+              class="clear-button"
+              aria-label="Clear first reminder"
+              hidden
+            >
+              ×
+            </button>
+          </div>
         </div>
 
         <div class="field">
           <label for="reminder10Minutes">Second reminder threshold (minutes)</label>
-          <input id="reminder10Minutes" type="number" min="1" step="1" placeholder="10m" required />
+          <div class="input-row">
+            <input
+              id="reminder10Minutes"
+              type="number"
+              min="1"
+              step="1"
+              placeholder="10m"
+              required
+            />
+            <button
+              id="clear-reminder10"
+              type="button"
+              class="clear-button"
+              aria-label="Clear second reminder"
+              hidden
+            >
+              ×
+            </button>
+          </div>
         </div>
 
         <div class="field">
