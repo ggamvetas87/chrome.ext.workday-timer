@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+  <title>Workday Timer</title>
+  <link rel="stylesheet" href="./popup.css" />
+</head>
+
+<body>
+  <main class="popup">
+    <button
+      id="settings-button"
+      class="settings-button"
+      type="button"
+      aria-label="Open settings"
+    >
+      ⚙
+    </button>
+
+    <section id="main-view">
+      <h1>Workday Timer</h1>
+
+      <label for="time">Start time / Clock-in</label>
+
+      <input
+        id="time"
+        type="text"
+        inputmode="numeric"
+        placeholder="08:30"
+        maxlength="5"
+        autocomplete="off"
+        autofocus
+      />
+
+      <div class="actions">
+        <button id="calculate" type="button">
+          Calculate
+        </button>
+
+        <button id="reset" type="button" class="secondary">
+          Reset
+        </button>
+      </div>
+
+      <div id="result" class="result hidden">
+        <div class="result-label">
+          Clock out at
+        </div>
+
+        <div id="clockOut" class="clock-out">
+          --:--
+        </div>
+
+        <div class="countdown-label">
+          Time remaining
+        </div>
+
+        <div
+          id="countdown"
+          class="countdown"
+          aria-live="polite"
+        >
+          --:--:--
+        </div>
+
+        <div class="reminders">
+          <div>
+            <span id="reminder30Label">30 min reminder</span>
+            <strong id="reminder30">--:--</strong>
+          </div>
+
+          <div>
+            <span id="reminder10Label">10 min reminder</span>
+            <strong id="reminder10">--:--</strong>
+          </div>
+        </div>
+
+        <div id="popup-status" class="status success hidden"></div>
+        <div id="reminder-status" class="status error hidden"></div>
+      </div>
+
+      <div id="error" class="status error hidden"></div>
+    </section>
+
+    <section id="settings-view" class="hidden">
+      <button
+        id="back-button"
+        class="back-button"
+        type="button"
+        aria-label="Back"
+      >
+        ←
+      </button>
+
+      <h1>Settings</h1>
+
+      <form id="settings-form">
+        <div class="field">
+          <label for="reminder30Minutes">First reminder threshold (minutes)</label>
+          <input id="reminder30Minutes" type="number" min="1" step="1" placeholder="30m" required />
+        </div>
+
+        <div class="field">
+          <label for="reminder10Minutes">Second reminder threshold (minutes)</label>
+          <input id="reminder10Minutes" type="number" min="1" step="1" placeholder="10m" required />
+        </div>
+
+        <div class="field">
+          <label for="ringSound">Reminder sound</label>
+          <select id="ringSound"></select>
+        </div>
+
+        <div class="actions">
+          <button id="save-settings" type="submit">
+            Save
+          </button>
+
+          <button id="reset-defaults" type="button" class="secondary">
+            Reset
+          </button>
+        </div>
+
+        <div id="settings-status" class="status success hidden" aria-live="polite"></div>
+      </form>
+    </section>
+  </main>
+
+  <script src="./popup.js"></script>
+</body>
+</html>
