@@ -37,13 +37,9 @@
       />
 
       <div class="actions">
-        <button id="calculate" type="button">
-          Calculate
-        </button>
-
-        <button id="reset" type="button" class="secondary">
-          Reset
-        </button>
+        <button id="calculate" type="button">Calculate</button>
+        <button id="start-now" type="button" class="secondary">Start now</button>
+        <button id="reset" type="button" class="secondary">Reset</button>
       </div>
 
       <div id="result" class="result hidden">
@@ -99,6 +95,19 @@
       <h1>Settings</h1>
 
       <form id="settings-form">
+        <div class="field">
+          <label for="workDuration">Work duration (HH:MM)</label>
+          <input
+            id="workDuration"
+            type="text"
+            inputmode="numeric"
+            placeholder="08:30"
+            maxlength="5"
+            autocomplete="off"
+            required
+          />
+        </div>
+        
         <div class="field">
           <label for="reminder30Minutes">First reminder threshold (minutes)</label>
           <input id="reminder30Minutes" type="number" min="1" step="1" placeholder="30m" required />
