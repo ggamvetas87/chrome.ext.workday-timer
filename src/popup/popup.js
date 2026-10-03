@@ -742,22 +742,53 @@ if (startNowButton instanceof HTMLButtonElement && timeInput instanceof HTMLInpu
     timeInput.value = getCurrentTimeValue();
     timeInput.dispatchEvent(new Event("input", { bubbles: true }));
     timeInput.focus();
+
     void calculate();
+
+    if (!popupStatus.classList.contains("hidden")) {
+      popupStatus.classList.add("hidden");
+    }
 
     // Send a message to the active tab to trigger the check-in action
     // Used for triggering the HRMS Hub ClockIn / CheckIn for myErgani
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const [activeTab] = tabs;
 
-      if (!activeTab?.id) return;
+      if (!activeTab?.id || !isHrmsTab(activeTab.url)) return;
 
       chrome.tabs.sendMessage(activeTab.id, { type: "CLICK_CHECKIN" }, () => {
-        if (chrome.runtime.lastError) {
-          console.error(chrome.runtime.lastError.message);
-        }
+        if (chrome.runtime.lastError) return;
       });
     });
   });
+}
+
+function getHrmsOrigin() {
+  const manifest = chrome.runtime.getManifest();
+  const hostPermission = manifest.host_permissions?.find((entry) =>
+    typeof entry === "string" && entry.includes("://")
+  );
+
+  if (!hostPermission) return null;
+
+  try {
+    return new URL(hostPermission.replaceAll("*", "")).origin;
+  } catch {
+    return null;
+  }
+}
+
+function isHrmsTab(url) {
+  if (typeof url !== "string") return false;
+
+  const hrmsOrigin = getHrmsOrigin();
+  if (!hrmsOrigin) return false;
+
+  try {
+    return new URL(url).origin === hrmsOrigin;
+  } catch {
+    return false;
+  }
 }
 
 function getCurrentTimeValue() {
