@@ -1,5 +1,19 @@
 const timeInput = document.getElementById("time");
+const clearTimeButton = document.getElementById("clear-time");
+
+const workDurationInput = document.getElementById("workDuration");
+const clearWorkDurationButton = document.getElementById("clear-work-duration");
+
+const reminder30Input = document.getElementById("reminder30Minutes");
+const clearReminder30Button = document.getElementById("clear-reminder30");
+
+const reminder10Input = document.getElementById("reminder10Minutes");
+const clearReminder10Button = document.getElementById("clear-reminder10");
+
+const ringSoundSelect = document.getElementById("ringSound");
+
 const calculateButton = document.getElementById("calculate");
+const startNowButton = document.getElementById("start-now");
 const resetButton = document.getElementById("reset");
 
 const result = document.getElementById("result");
@@ -11,6 +25,7 @@ const reminder30 = document.getElementById("reminder30");
 const reminder10 = document.getElementById("reminder10");
 const reminder30Label = document.getElementById("reminder30Label");
 const reminder10Label = document.getElementById("reminder10Label");
+
 const popupStatus = document.getElementById("popup-status");
 const reminderStatus = document.getElementById("reminder-status");
 
@@ -18,9 +33,9 @@ const REMINDER_30_MINUTES_KEY = "reminder30Minutes";
 const REMINDER_10_MINUTES_KEY = "reminder10Minutes";
 const DEFAULT_REMINDER_30_MINUTES = 30;
 const DEFAULT_REMINDER_10_MINUTES = 10;
-// const WORK_DURATION_MINUTES = 8 * 60 + 30;
-const WORK_DURATION_MINUTES = 3;
+const DEFAULT_WORK_DURATION_MINUTES = 8 * 60 + 30;
 
+const WORK_DURATION_KEY = "workDurationMinutes";
 const RING_SOUND_KEY = "selectedRingSound";
 
 const SOUND_OPTIONS = [
@@ -37,13 +52,17 @@ const SOUND_OPTIONS = [
   { value: "src/assets/sounds/spongebob-fail.mp3", label: "Spongebob Fail" },
   { value: "src/assets/sounds/stamataaaaaaa.mp3", label: "Stamataaaaaaa" },
   { value: "src/assets/sounds/taco-bell-bong-sfx.mp3", label: "Taco Bell Bong SFX" },
-  { value: "src/assets/sounds/ti-les-more-maimou-tou-pharao.mp3", label: "Ti Les More Maimou Tou Pharao" }
+  { value: "src/assets/sounds/ti-les-more-maimou-tou-pharao.mp3", label: "Ti Les More Maimou Tou Pharao" },
+  { value: "src/assets/sounds/snoop-dog.mp3", label: "Snoop Dog" },
+  { value: "src/assets/sounds/e33-lumiere.mp3", label: "Expedition 33 - Lumiere" },
+  { value: "src/assets/sounds/monoco-theme.mp3", label: "Expedition 33 - Monoco theme" },
+  { value: "src/assets/sounds/final-fantasy-vii-victory-fanfare.mp3", label: "FFVII Victory fanfare" },
+  { value: "src/assets/sounds/mgs-rules-of-nature.mp3", label: "MGS - Rules of nature" },
+  { value: "src/assets/sounds/mgs-gameover.mp3", label: "MGS - Gameover" }
 ];
 
 const backButton = document.getElementById("back-button");
-const reminder30Input = document.getElementById("reminder30Minutes");
-const reminder10Input = document.getElementById("reminder10Minutes");
-const ringSoundSelect = document.getElementById("ringSound");
+const previewRingSoundButton = document.getElementById("preview-ring-sound");
 const settingsButton = document.getElementById("settings-button");
 const settingsForm = document.getElementById("settings-form");
 
@@ -126,6 +145,7 @@ function updateCountdown(clockOutTimestamp) {
     popupStatus.textContent = "Timer has finished";
     popupStatus.classList.remove("hidden");
     popupStatus.classList.add("error");
+    reminderStatus.classList.add("hidden");
   }
 }
 
@@ -181,7 +201,7 @@ function startCountdown(clockOutTimestamp) {
 /**
  * Calculate clock-out date
  */
-function calculateDate(startTime) {
+function calculateDate(startTime, workDurationMinutes) {
   const now = new Date();
 
   const start = new Date(now);
@@ -194,8 +214,7 @@ function calculateDate(startTime) {
   );
 
   const clockOut = new Date(
-    start.getTime() +
-      WORK_DURATION_MINUTES * 60 * 1000
+    start.getTime() + workDurationMinutes * 60 * 1000
   );
 
   return clockOut;
@@ -256,19 +275,16 @@ async function calculate() {
   const parsed = parseTime(timeInput.value);
 
   if (!parsed) {
-    error.textContent =
-      "Please enter a valid time, e.g. 08:30.";
-
+    error.textContent = "Please enter a valid time, e.g. 08:30.";
     error.classList.remove("hidden");
     result.classList.add("hidden");
-
     return;
   }
 
   error.classList.add("hidden");
 
-  const clockOutDate = calculateDate(parsed);
-
+  const workDurationMinutes = await getWorkDurationMinutes();
+  const clockOutDate = calculateDate(parsed, workDurationMinutes);
   const clockOutTimestamp = clockOutDate.getTime();
 
   await chrome.storage.local.set({
@@ -378,30 +394,40 @@ if (
   settingsForm instanceof HTMLFormElement &&
   reminder30Input instanceof HTMLInputElement &&
   reminder10Input instanceof HTMLInputElement &&
+  workDurationInput instanceof HTMLInputElement &&
   resetDefaultsButton instanceof HTMLButtonElement &&
   settingsStatus instanceof HTMLDivElement
 ) {
   void loadReminderSettings(reminder30Input, reminder10Input);
+  void loadWorkDurationSetting(workDurationInput);
 
   settingsForm.addEventListener("submit", (event) => {
     event.preventDefault();
     void saveReminderSettings(reminder30Input, reminder10Input, settingsStatus);
+    void saveWorkDurationSetting(workDurationInput, settingsStatus);
   });
 
   resetDefaultsButton.addEventListener("click", () => {
     reminder30Input.value = String(DEFAULT_REMINDER_30_MINUTES);
     reminder10Input.value = String(DEFAULT_REMINDER_10_MINUTES);
+    workDurationInput.value = formatDuration(DEFAULT_WORK_DURATION_MINUTES);
   });
 }
 
 function showSettingsView() {
-  if (mainView) mainView.classList.add("hidden");
-  if (settingsView) settingsView.classList.remove("hidden");
+  if (mainView instanceof HTMLElement) mainView.classList.add("hidden");
+  if (settingsView instanceof HTMLElement) settingsView.classList.remove("hidden");
+  updateStartNowVisibility();
 }
 
 function showMainView() {
-  if (settingsView) settingsView.classList.add("hidden");
-  if (mainView) mainView.classList.remove("hidden");
+  if (settingsView instanceof HTMLElement) settingsView.classList.add("hidden");
+  if (mainView instanceof HTMLElement) mainView.classList.remove("hidden");
+  updateStartNowVisibility();
+}
+
+if (settingsButton instanceof HTMLButtonElement) {
+  settingsButton.addEventListener("click", showSettingsView);
 }
 
 async function loadReminderSettings(reminder30Input, reminder10Input) {
@@ -475,6 +501,185 @@ function normalizeMinutes(value, fallback) {
   return parsedValue;
 }
 
+function formatDuration(minutes) {
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+
+  return `${String(hours).padStart(2, "0")}:${String(remainingMinutes).padStart(2, "0")}`;
+}
+
+function parseDuration(value) {
+  const match = value.trim().match(/^(\d{1,2}):(\d{2})$/);
+
+  if (!match) return null;
+
+  const hours = Number(match[1]);
+  const minutes = Number(match[2]);
+
+  if (hours < 0 || minutes < 0 || minutes > 59) return null;
+
+  return hours * 60 + minutes;
+}
+
+function normalizeDuration(value, fallback) {
+  const parsedValue = Number.parseInt(String(value), 10);
+
+  if (!Number.isFinite(parsedValue) || parsedValue <= 0) return fallback;
+
+  return parsedValue;
+}
+
+function getWorkDurationMinutes() {
+  return chrome.storage.local.get(WORK_DURATION_KEY).then((storedValues) =>
+    normalizeDuration(storedValues[WORK_DURATION_KEY], DEFAULT_WORK_DURATION_MINUTES)
+  );
+}
+
+/**
+ * Calculate clock-out date
+ */
+function calculateDate(startTime, workDurationMinutes) {
+  const now = new Date();
+
+  const start = new Date(now);
+
+  start.setHours(
+    startTime.hours,
+    startTime.minutes,
+    0,
+    0
+  );
+
+  const clockOut = new Date(
+    start.getTime() + workDurationMinutes * 60 * 1000
+  );
+
+  return clockOut;
+}
+
+/**
+ * Calculate and save timer
+ */
+async function calculate() {
+  const parsed = parseTime(timeInput.value);
+
+  if (!parsed) {
+    error.textContent = "Please enter a valid time, e.g. 08:30.";
+    error.classList.remove("hidden");
+    result.classList.add("hidden");
+    return;
+  }
+
+  error.classList.add("hidden");
+
+  const workDurationMinutes = await getWorkDurationMinutes();
+  const clockOutDate = calculateDate(parsed, workDurationMinutes);
+  const clockOutTimestamp = clockOutDate.getTime();
+
+  await chrome.storage.local.set({
+    startTime: timeInput.value,
+    clockOut: clockOutTimestamp
+  });
+
+  renderTimer(clockOutTimestamp);
+
+  await chrome.runtime.sendMessage({
+    type: "SCHEDULE_REMINDERS",
+    clockOut: clockOutTimestamp
+  });
+}
+
+async function loadWorkDurationSetting(input) {
+  const storedValues = await chrome.storage.local.get(WORK_DURATION_KEY);
+  input.value = formatDuration(
+    normalizeDuration(storedValues[WORK_DURATION_KEY], DEFAULT_WORK_DURATION_MINUTES)
+  );
+}
+
+async function saveWorkDurationSetting(input, statusElement) {
+  const parsedDuration = parseDuration(input.value);
+
+  const workDurationMinutes = parsedDuration ?? DEFAULT_WORK_DURATION_MINUTES;
+
+  input.value = formatDuration(workDurationMinutes);
+
+  await chrome.storage.local.set({
+    [WORK_DURATION_KEY]: workDurationMinutes
+  });
+
+  statusElement.textContent = "Settings saved!";
+  statusElement.classList.remove("hidden");
+  setTimeout(() => {
+    statusElement.classList.add("hidden");
+  }, 2000);
+}
+
+if (
+  settingsForm instanceof HTMLFormElement &&
+  reminder30Input instanceof HTMLInputElement &&
+  reminder10Input instanceof HTMLInputElement &&
+  workDurationInput instanceof HTMLInputElement &&
+  resetDefaultsButton instanceof HTMLButtonElement &&
+  settingsStatus instanceof HTMLDivElement
+) {
+  void loadReminderSettings(reminder30Input, reminder10Input);
+  void loadWorkDurationSetting(workDurationInput);
+
+  settingsForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    void saveReminderSettings(reminder30Input, reminder10Input, settingsStatus);
+    void saveWorkDurationSetting(workDurationInput, settingsStatus);
+  });
+
+  resetDefaultsButton.addEventListener("click", () => {
+    reminder30Input.value = String(DEFAULT_REMINDER_30_MINUTES);
+    reminder10Input.value = String(DEFAULT_REMINDER_10_MINUTES);
+    workDurationInput.value = formatDuration(DEFAULT_WORK_DURATION_MINUTES);
+  });
+}
+
+let isPreviewPlaying = false;
+let activePreviewId = 0;
+
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.type !== "RING_STOPPED") return;
+
+  isPreviewPlaying = false;
+
+  if (previewRingSoundButton instanceof HTMLButtonElement) {
+    previewRingSoundButton.textContent = "Play sound";
+  }
+});
+
+function togglePreviewSound() {
+  if (
+    !(ringSoundSelect instanceof HTMLSelectElement) ||
+    !(previewRingSoundButton instanceof HTMLButtonElement)
+  ) return;
+
+  if (isPreviewPlaying) {
+    void chrome.runtime.sendMessage({
+      type: "STOP_RING",
+      previewId: activePreviewId
+    });
+
+    isPreviewPlaying = false;
+    previewRingSoundButton.textContent = "Play sound";
+    return;
+  }
+
+  activePreviewId += 1;
+
+  void chrome.runtime.sendMessage({
+    type: "PREVIEW_RING",
+    soundPath: ringSoundSelect.value,
+    previewId: activePreviewId
+  });
+
+  isPreviewPlaying = true;
+  previewRingSoundButton.textContent = "Stop sound";
+}
+
 function populateSoundOptions(select) {
   const defaultOption = document.createElement("option");
   defaultOption.value = "";
@@ -510,7 +715,21 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!(ringSoundSelect instanceof HTMLSelectElement)) return;
 
   populateSoundOptions(ringSoundSelect);
-  void loadSelectedSound(ringSoundSelect);
+
+  void loadSelectedSound(ringSoundSelect).finally(() => {
+    isLoadingRingSound = false;
+  });
+
+  if (previewRingSoundButton instanceof HTMLButtonElement) {
+    previewRingSoundButton.addEventListener("click", togglePreviewSound);
+  }
+
+  ringSoundSelect.addEventListener("change", () => {
+    if (isLoadingRingSound) return;
+
+    stopPreviewSound();
+    void saveSelectedSound(ringSoundSelect);
+  });
 
   if (settingsForm instanceof HTMLFormElement) {
     settingsForm.addEventListener("submit", (event) => {
@@ -518,8 +737,121 @@ document.addEventListener("DOMContentLoaded", () => {
       void saveSelectedSound(ringSoundSelect);
     });
   }
-
-  ringSoundSelect.addEventListener("change", () => {
-    void saveSelectedSound(ringSoundSelect);
-  });
 });
+
+if (startNowButton instanceof HTMLButtonElement && timeInput instanceof HTMLInputElement) {
+  startNowButton.addEventListener("click", () => {
+    timeInput.value = getCurrentTimeValue();
+    timeInput.dispatchEvent(new Event("input", { bubbles: true }));
+    timeInput.focus();
+    void calculate();
+
+    // Send a message to the active tab to trigger the check-in action
+    // Used for triggering the HRMS Hub ClockIn / CheckIn for myErgani
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const [activeTab] = tabs;
+
+      if (!activeTab?.id) return;
+
+      chrome.tabs.sendMessage(activeTab.id, { type: "CLICK_CHECKIN" }, () => {
+        if (chrome.runtime.lastError) {
+          console.error(chrome.runtime.lastError.message);
+        }
+      });
+    });
+  });
+}
+
+function getCurrentTimeValue() {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+
+  return `${hours}:${minutes}`;
+}
+
+function attachFormattedTimeInput(input, onValueChanged) {
+  if (!(input instanceof HTMLInputElement)) return;
+
+  input.addEventListener("input", () => {
+    const caretPosition = input.selectionStart ?? input.value.length;
+    const digitIndex = getDigitIndex(input.value, caretPosition);
+
+    input.value = formatTimeInput(input.value);
+
+    const nextCaretPosition = getCaretPosition(input.value, digitIndex);
+    input.setSelectionRange(nextCaretPosition, nextCaretPosition);
+
+    if (typeof onValueChanged === "function") onValueChanged();
+  });
+
+  input.addEventListener("paste", (event) => {
+    event.preventDefault();
+
+    const pastedText = event.clipboardData.getData("text");
+    input.value = formatTimeInput(pastedText);
+
+    if (typeof onValueChanged === "function") onValueChanged();
+  });
+
+  input.addEventListener("blur", () => {
+    input.value = formatTimeInput(input.value);
+  });
+}
+
+// Replace the existing start time listeners with this:
+attachFormattedTimeInput(timeInput, () => {
+  error.classList.add("hidden");
+});
+
+// Add this for work duration too:
+attachFormattedTimeInput(workDurationInput);
+
+document.addEventListener("DOMContentLoaded", () => {
+  bindClearButton(timeInput, clearTimeButton);
+  bindClearButton(workDurationInput, clearWorkDurationButton);
+  bindClearButton(reminder30Input, clearReminder30Button);
+  bindClearButton(reminder10Input, clearReminder10Button);
+
+  syncClearButtonVisibility(timeInput, clearTimeButton);
+  syncClearButtonVisibility(workDurationInput, clearWorkDurationButton);
+  syncClearButtonVisibility(reminder30Input, clearReminder30Button);
+  syncClearButtonVisibility(reminder10Input, clearReminder10Button);
+});
+
+function bindClearButton(input, button) {
+  if (!(input instanceof HTMLInputElement)) return;
+  if (!(button instanceof HTMLButtonElement)) return;
+
+  syncClearButtonVisibility(input, button);
+
+  input.addEventListener("input", () => {
+    syncClearButtonVisibility(input, button);
+  });
+
+  button.addEventListener("click", () => {
+    if (input.value.trim() === "") return;
+
+    clearInput(input, button);
+  });
+}
+
+function syncClearButtonVisibility(input, button) {
+  if (!(input instanceof HTMLInputElement)) return;
+  if (!(button instanceof HTMLButtonElement)) return;
+
+  button.hidden = input.value.trim() === "";
+}
+
+function clearInput(input, button) {
+  if (!(input instanceof HTMLInputElement)) return;
+
+  input.value = "";
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+
+  if (button instanceof HTMLButtonElement) {
+    button.hidden = true;
+  }
+
+  input.focus();
+}
