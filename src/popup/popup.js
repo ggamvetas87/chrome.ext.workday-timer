@@ -286,7 +286,7 @@ async function calculate() {
     clockOut: clockOutTimestamp
   });
 
-  renderTimer(clockOutTimestamp);
+  await renderTimer(clockOutTimestamp);
 
   await chrome.runtime.sendMessage({
     type: "SCHEDULE_REMINDERS",
