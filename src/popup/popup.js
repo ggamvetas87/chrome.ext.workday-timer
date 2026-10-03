@@ -417,13 +417,11 @@ if (
 function showSettingsView() {
   if (mainView instanceof HTMLElement) mainView.classList.add("hidden");
   if (settingsView instanceof HTMLElement) settingsView.classList.remove("hidden");
-  updateStartNowVisibility();
 }
 
 function showMainView() {
   if (settingsView instanceof HTMLElement) settingsView.classList.add("hidden");
   if (mainView instanceof HTMLElement) mainView.classList.remove("hidden");
-  updateStartNowVisibility();
 }
 
 if (settingsButton instanceof HTMLButtonElement) {
