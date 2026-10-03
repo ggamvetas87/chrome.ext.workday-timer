@@ -853,3 +853,18 @@ function clearInput(input, button) {
 
   input.focus();
 }
+
+function stopPreviewSound() {
+  if (!isPreviewPlaying) return;
+
+  void chrome.runtime.sendMessage({
+    type: "STOP_RING",
+    previewId: activePreviewId
+  });
+
+  isPreviewPlaying = false;
+
+  if (previewRingSoundButton instanceof HTMLButtonElement) {
+    previewRingSoundButton.textContent = "Play sound";
+  }
+}
