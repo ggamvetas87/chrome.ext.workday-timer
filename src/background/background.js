@@ -48,10 +48,6 @@ chrome.runtime.onMessage.addListener((message) => {
     void previewRing(message.soundPath);
     return;
   }
-
-  if (message.type === "STOP_RING") {
-    stopRing();
-  }
 });
 
 async function clearReminders() {

@@ -4,6 +4,7 @@ let activeAudio = null;
 let activeAudioContext = null;
 let activeOscillator = null;
 let activePreviewId = null;
+let activePlaybackToken = 0;
 
 chrome.runtime.onMessage.addListener((message) => {
   if (message.type === "PLAY_RING" || message.type === "PREVIEW_RING") {
@@ -12,42 +13,49 @@ chrome.runtime.onMessage.addListener((message) => {
   }
 
   if (message.type === "STOP_RING") {
+    activePlaybackToken += 1;
     stopRing(message.previewId ?? activePreviewId);
   }
 });
 
 async function playRing(soundPath, previewId) {
+  activePlaybackToken += 1;
+  const playbackToken = activePlaybackToken;
+
   stopCurrentPlayback();
   activePreviewId = previewId;
 
   if (soundPath) {
-    const played = await playAudioSound(soundPath, previewId);
+    const played = await playAudioSound(soundPath, previewId, playbackToken);
     if (played) return;
 
-    console.error(`Could not play selected sound: ${soundPath}`);
+    if (playbackToken === activePlaybackToken) {
+      console.error(`Could not play selected sound: ${soundPath}`);
+    }
+
     return;
   }
 
   await playDefaultTone(previewId);
 }
 
-async function playAudioSound(soundPath, previewId) {
+async function playAudioSound(soundPath, previewId, playbackToken) {
   try {
-    activeAudio = new Audio(chrome.runtime.getURL(soundPath));
+    const soundUrl = chrome.runtime.getURL(soundPath);
+
+    activeAudio = new Audio(soundUrl);
     activeAudio.preload = "auto";
     activeAudio.volume = 1;
 
-    activeAudio.addEventListener(
-      "ended",
-      () => {
-        notifyRingStopped(previewId);
-      },
-      { once: true }
-    );
+    activeAudio.addEventListener("ended", () => notifyRingStopped(previewId), { once: true });
 
     await activeAudio.play();
     return true;
-  } catch {
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") return false;
+    if (playbackToken !== activePlaybackToken) return false;
+
+    console.error(`Could not play selected sound: ${soundPath}`, error);
     return false;
   }
 }
