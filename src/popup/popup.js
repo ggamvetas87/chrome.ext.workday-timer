@@ -53,7 +53,12 @@ const SOUND_OPTIONS = [
   { value: "src/assets/sounds/stamataaaaaaa.mp3", label: "Stamataaaaaaa" },
   { value: "src/assets/sounds/taco-bell-bong-sfx.mp3", label: "Taco Bell Bong SFX" },
   { value: "src/assets/sounds/ti-les-more-maimou-tou-pharao.mp3", label: "Ti Les More Maimou Tou Pharao" },
-  { value: "src/assets/sounds/snoop-dog.mp3", label: "Snoop Dog" }
+  { value: "src/assets/sounds/snoop-dog.mp3", label: "Snoop Dog" },
+  { value: "src/assets/sounds/e33-lumiere.mp3", label: "Expedition 33 - Lumiere" },
+  { value: "src/assets/sounds/monoco-theme.mp3", label: "Expedition 33 - Monoco theme" },
+  { value: "src/assets/sounds/final-fantasy-vii-victory-fanfare.mp3", label: "FFVII Victory fanfare" },
+  { value: "src/assets/sounds/mgs-rules-of-nature.mp3", label: "MGS - Rules of nature" },
+  { value: "src/assets/sounds/mgs-gameover.mp3", label: "MGS - Gameover" }
 ];
 
 const backButton = document.getElementById("back-button");
