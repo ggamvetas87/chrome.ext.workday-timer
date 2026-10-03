@@ -44,6 +44,7 @@ const backButton = document.getElementById("back-button");
 const reminder30Input = document.getElementById("reminder30Minutes");
 const reminder10Input = document.getElementById("reminder10Minutes");
 const ringSoundSelect = document.getElementById("ringSound");
+const previewRingSoundButton = document.getElementById("preview-ring-sound");
 const settingsButton = document.getElementById("settings-button");
 const settingsForm = document.getElementById("settings-form");
 
@@ -475,6 +476,48 @@ function normalizeMinutes(value, fallback) {
   return parsedValue;
 }
 
+let isPreviewPlaying = false;
+let activePreviewId = 0;
+
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.type !== "RING_STOPPED") return;
+
+  isPreviewPlaying = false;
+
+  if (previewRingSoundButton instanceof HTMLButtonElement) {
+    previewRingSoundButton.textContent = "Play sound";
+  }
+});
+
+function togglePreviewSound() {
+  if (
+    !(ringSoundSelect instanceof HTMLSelectElement) ||
+    !(previewRingSoundButton instanceof HTMLButtonElement)
+  ) return;
+
+  if (isPreviewPlaying) {
+    void chrome.runtime.sendMessage({
+      type: "STOP_RING",
+      previewId: activePreviewId
+    });
+
+    isPreviewPlaying = false;
+    previewRingSoundButton.textContent = "Play sound";
+    return;
+  }
+
+  activePreviewId += 1;
+
+  void chrome.runtime.sendMessage({
+    type: "PREVIEW_RING",
+    soundPath: ringSoundSelect.value,
+    previewId: activePreviewId
+  });
+
+  isPreviewPlaying = true;
+  previewRingSoundButton.textContent = "Stop sound";
+}
+
 function populateSoundOptions(select) {
   const defaultOption = document.createElement("option");
   defaultOption.value = "";
@@ -510,7 +553,21 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!(ringSoundSelect instanceof HTMLSelectElement)) return;
 
   populateSoundOptions(ringSoundSelect);
-  void loadSelectedSound(ringSoundSelect);
+
+  void loadSelectedSound(ringSoundSelect).finally(() => {
+    isLoadingRingSound = false;
+  });
+
+  if (previewRingSoundButton instanceof HTMLButtonElement) {
+    previewRingSoundButton.addEventListener("click", togglePreviewSound);
+  }
+
+  ringSoundSelect.addEventListener("change", () => {
+    if (isLoadingRingSound) return;
+
+    stopPreviewSound();
+    void saveSelectedSound(ringSoundSelect);
+  });
 
   if (settingsForm instanceof HTMLFormElement) {
     settingsForm.addEventListener("submit", (event) => {
@@ -518,8 +575,4 @@ document.addEventListener("DOMContentLoaded", () => {
       void saveSelectedSound(ringSoundSelect);
     });
   }
-
-  ringSoundSelect.addEventListener("change", () => {
-    void saveSelectedSound(ringSoundSelect);
-  });
 });

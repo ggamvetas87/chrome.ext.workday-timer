@@ -3,44 +3,56 @@ const RING_SOUND_KEY = "selectedRingSound";
 let activeAudio = null;
 let activeAudioContext = null;
 let activeOscillator = null;
+let activePreviewId = null;
 
 chrome.runtime.onMessage.addListener((message) => {
-  if (message.type === "PLAY_RING") {
-    void playRing(message.soundPath);
+  if (message.type === "PLAY_RING" || message.type === "PREVIEW_RING") {
+    void playRing(message.soundPath, message.previewId ?? null);
     return;
   }
 
   if (message.type === "STOP_RING") {
-    stopRing();
+    stopRing(message.previewId ?? activePreviewId);
   }
 });
 
-async function playRing(soundPath) {
-  stopRing();
+async function playRing(soundPath, previewId) {
+  stopCurrentPlayback();
+  activePreviewId = previewId;
 
   if (soundPath) {
-    const played = await playAudioSound(soundPath);
+    const played = await playAudioSound(soundPath, previewId);
     if (played) return;
+
+    console.error(`Could not play selected sound: ${soundPath}`);
+    return;
   }
 
-  await playDefaultTone();
+  await playDefaultTone(previewId);
 }
 
-async function playAudioSound(soundPath) {
+async function playAudioSound(soundPath, previewId) {
   try {
     activeAudio = new Audio(chrome.runtime.getURL(soundPath));
     activeAudio.preload = "auto";
     activeAudio.volume = 1;
 
+    activeAudio.addEventListener(
+      "ended",
+      () => {
+        notifyRingStopped(previewId);
+      },
+      { once: true }
+    );
+
     await activeAudio.play();
     return true;
-  } catch (error) {
-    console.error("Could not play custom reminder sound:", error);
+  } catch {
     return false;
   }
 }
 
-async function playDefaultTone() {
+async function playDefaultTone(previewId) {
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   activeAudioContext = new AudioContext();
 
@@ -59,15 +71,15 @@ async function playDefaultTone() {
   activeOscillator.connect(gain);
   gain.connect(activeAudioContext.destination);
 
+  activeOscillator.addEventListener("ended", () => {
+    stopRing(previewId);
+  });
+
   activeOscillator.start();
   activeOscillator.stop(activeAudioContext.currentTime + 0.7);
-
-  activeOscillator.addEventListener("ended", () => {
-    stopRing();
-  });
 }
 
-function stopRing() {
+function stopCurrentPlayback() {
   if (activeAudio) {
     activeAudio.pause();
     activeAudio.currentTime = 0;
@@ -88,4 +100,17 @@ function stopRing() {
     void activeAudioContext.close();
     activeAudioContext = null;
   }
+}
+
+function stopRing(previewId) {
+  stopCurrentPlayback();
+  notifyRingStopped(previewId);
+  activePreviewId = null;
+}
+
+function notifyRingStopped(previewId) {
+  void chrome.runtime.sendMessage({
+    type: "RING_STOPPED",
+    previewId
+  });
 }

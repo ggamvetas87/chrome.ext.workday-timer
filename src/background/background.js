@@ -38,6 +38,22 @@ chrome.runtime.onMessage.addListener((message) => {
   void scheduleReminders(Number(message.clockOut));
 });
 
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.type === "PLAY_RING") {
+    void playRing(message.soundPath);
+    return;
+  }
+
+  if (message.type === "PREVIEW_RING") {
+    void previewRing(message.soundPath);
+    return;
+  }
+
+  if (message.type === "STOP_RING") {
+    stopRing();
+  }
+});
+
 async function clearReminders() {
   await chrome.alarms.clear(REMINDER_30);
   await chrome.alarms.clear(REMINDER_10);
@@ -285,4 +301,25 @@ async function findExistingSettingsWindow() {
       tab.url?.startsWith(settingsUrlPrefix)
     )
   );
+}
+
+async function previewRing(soundPath) {
+  try {
+    const hasDocument = await chrome.offscreen.hasDocument();
+
+    if (!hasDocument) {
+      await chrome.offscreen.createDocument({
+        url: offscreenTemplatePath,
+        reasons: ["AUDIO_PLAYBACK"],
+        justification: "Preview reminder sound from popup"
+      });
+    }
+
+    await chrome.runtime.sendMessage({
+      type: "PREVIEW_RING",
+      soundPath: soundPath ?? ""
+    });
+  } catch (error) {
+    console.error("Could not preview reminder sound:", error);
+  }
 }
