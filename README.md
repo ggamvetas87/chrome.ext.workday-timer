@@ -2,6 +2,8 @@
 
 A Chrome extension that calculates a clock-out time from a clock-in/start time and schedules reminder alerts before the end of the workday.
 
+![chrome-ext-workday-time-2](docs/screenshots/chrome-ext-workday-time-2.png "chrome-ext-workday-time-2")
+
 ## Capabilities
 
 - Calculates clock-out time from a user-entered start time
@@ -91,3 +93,13 @@ The extension can also interact with your Company's HRHub page:
 - Replace `https://<HRMS_HUB_URL>/` with the real HRMS hub URL before using the integration.
 - The extension must be reloaded after manifest changes.
 - The HRHub page must be refreshed after installing the content script.
+
+### Screenshots
+
+![chrome-ext-workday-time-1](docs/screenshots/chrome-ext-workday-time-1.png "chrome-ext-workday-time-1")
+
+![chrome-ext-workday-time-2](docs/screenshots/chrome-ext-workday-time-2.png "chrome-ext-workday-time-2")
+
+![chrome-ext-workday-time-3](docs/screenshots/chrome-ext-workday-time-3.png "chrome-ext-workday-time-3")
+
+![chrome-ext-workday-time-4](docs/screenshots/chrome-ext-workday-time-4.png "chrome-ext-workday-time-4")
