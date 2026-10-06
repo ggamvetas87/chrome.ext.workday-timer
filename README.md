@@ -15,14 +15,20 @@ A Chrome extension that calculates a clock-out time from a clock-in/start time a
 - Falls back to the default built-in reminder sound if no custom sound is selected
 - Shows a reminder window when alerts fire
 - Stops the sound when the reminder window is dismissed
+- Light/Dark theme suuport
 
 ## Settings
 
 The extension stores the following values locally:
 
+- `workDurationMinutes`
+- `startTime`
+- `clockOut`
+- `clockoutTimestamp`
 - `reminder30Minutes`
 - `reminder10Minutes`
 - `selectedRingSound`
+- `themeMode`
 
 Default reminder thresholds:
 

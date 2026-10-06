@@ -1,5 +1,65 @@
-* {
-  box-sizing: border-box;
+:root {
+  --popup-bg: #f8fafc;
+  --popup-text: #0f172a;
+  --heading-text: #0f172a;
+  --label-text: #475569;
+  --input-bg: #ffffff;
+  --input-text: #0f172a;
+  --input-border: #cbd5e1;
+  --input-border-strong: #c8c8c8;
+  --button-bg: #0f172a;
+  --button-bg-hover: #1e293b;
+  --button-text: #ffffff;
+  --secondary-bg: transparent;
+  --secondary-border: #ccc;
+  --secondary-text: #555;
+  --secondary-hover-bg: #f5f5f5;
+  --destructive-border: #cc0000;
+  --destructive-text: #cc0000;
+  --destructive-hover-bg: #cc0000;
+  --destructive-hover-text: #ffffff;
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --status-bg: #e2e8f0;
+  --status-text: #475569;
+  --success-bg: #d1fae5;
+  --success-text: #16a34a;
+  --error-bg: #fee2e2;
+  --error-text: #991b1b;
+  --countdown-label: #666666;
+  --countdown-text: #0f172a;
+}
+
+body[data-theme="dark"] {
+  --popup-bg: #0f172a;
+  --popup-text: #e2e8f0;
+  --heading-text: #f8fafc;
+  --label-text: #cbd5e1;
+  --input-bg: #111827;
+  --input-text: #e2e8f0;
+  --input-border: #334155;
+  --input-border-strong: #475569;
+  --button-bg: #e2e8f0;
+  --button-bg-hover: #cbd5e1;
+  --button-text: #0f172a;
+  --secondary-bg: transparent;
+  --secondary-border: #475569;
+  --secondary-text: #e2e8f0;
+  --secondary-hover-bg: rgba(226, 232, 240, 0.08);
+  --destructive-border: #f87171;
+  --destructive-text: #f87171;
+  --destructive-hover-bg: #7f1d1d;
+  --destructive-hover-text: #ffffff;
+  --card-bg: #111827;
+  --card-border: #334155;
+  --status-bg: #1e293b;
+  --status-text: #cbd5e1;
+  --success-bg: #064e3b;
+  --success-text: #86efac;
+  --error-bg: #7f1d1d;
+  --error-text: #fecaca;
+  --countdown-label: #94a3b8;
+  --countdown-text: #f8fafc;
 }
 
 body {
@@ -10,8 +70,8 @@ body {
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
-  background: #f8fafc;
-  color: #0f172a;
+  background: var(--popup-bg);
+  color: var(--popup-text);
 }
 
 .container {
@@ -22,6 +82,7 @@ h1 {
   margin: 0 0 20px;
   font-size: 20px;
   font-weight: 600;
+  color: var(--heading-text);
 }
 
 label {
@@ -29,28 +90,29 @@ label {
   margin-bottom: 8px;
   font-size: 13px;
   font-weight: 500;
-  color: #475569;
+  color: var(--label-text);
 }
 
-input {
+input,
+select {
   width: 100%;
-  height: 44px;
+  min-height: 44px;
   padding: 0 12px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--input-border);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--input-bg);
+  color: var(--input-text);
   font-size: 18px;
   outline: none;
 }
 
-input:focus {
-  border-color: #64748b;
+input:focus,
+select:focus {
+  border-color: var(--input-border-strong);
   box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.15);
 }
 
 .field {
-  display: grid;
-  gap: 6px;
   margin-bottom: 16px;
 }
 
@@ -58,14 +120,14 @@ input:focus {
   box-sizing: border-box;
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #c8c8c8;
+  border: 1px solid var(--input-border-strong);
   border-radius: 8px;
   font-size: 14px;
 }
 
 .field select {
   padding: 10px 12px;
-  border: 1px solid #c8c8c8;
+  border: 1px solid var(--input-border-strong);
   border-radius: 8px;
   font-size: 14px;
 }
@@ -74,21 +136,38 @@ button {
   width: 100%;
   height: 44px;
   margin-top: 12px;
-
   border: 0;
   border-radius: 8px;
-
-  background: #0f172a;
-  color: white;
-
+  background: var(--button-bg);
+  color: var(--button-text);
   font-size: 15px;
   font-weight: 600;
-
   cursor: pointer;
 }
 
 button:hover {
-  background: #1e293b;
+  background: var(--button-bg-hover);
+}
+
+button.secondary {
+  background: var(--secondary-bg);
+  border: 1px solid var(--secondary-border);
+  color: var(--secondary-text);
+}
+
+button.secondary:hover {
+  background: var(--secondary-hover-bg);
+}
+
+button.destructive {
+  background: transparent;
+  border: 1px solid var(--destructive-border);
+  color: var(--destructive-text);
+}
+
+button.destructive:hover {
+  background: var(--destructive-hover-bg);
+  color: var(--destructive-hover-text);
 }
 
 /* -------------------------
@@ -118,6 +197,7 @@ button:hover {
   font-weight: 700;
   line-height: 1;
   text-align: center;
+  color: var(--countdown-text);
 }
 
 /* Reminder cards */
@@ -130,34 +210,32 @@ button:hover {
 .reminders > div {
   min-width: 0;
   padding: 10px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--card-border);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--card-bg);
   text-align: center;
 }
 
 .reminders span {
   display: block;
   margin-bottom: 4px;
-  color: #64748b;
+  color: var(--label-text);
   font-size: 12px;
   line-height: 1.2;
 }
 
 .reminders strong {
   display: block;
-  color: #0f172a;
+  color: var(--countdown-text);
   font-size: 17px;
   font-weight: 700;
 }
 
-/* Status */
 .status {
-  min-height: 20px;
   margin-top: 12px;
   padding: 10px;
-  color: #475569;
-  background: #e2e8f0;
+  background: var(--status-bg);
+  color: var(--status-text);
   font-size: 13px;
   font-weight: 500;
   text-align: center;
@@ -165,19 +243,19 @@ button:hover {
 }
 
 .success {
-  background: #d1fae5;
-  color: #16a34a;
+  background: var(--success-bg);
+  color: var(--success-text);
 }
 
 .error {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--error-bg);
+  color: var(--error-text);
 }
 
 .countdown-label {
   margin-top: 16px;
   font-size: 12px;
-  color: #666;
+  color: var(--countdown-label);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   text-align: center;
@@ -190,6 +268,7 @@ button:hover {
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.04em;
+  color: var(--countdown-text);
 }
 
 .actions {
@@ -203,24 +282,24 @@ button:hover {
 }
 
 button.secondary {
-  background: transparent;
-  border: 1px solid #ccc;
-  color: #555;
+  background: var(--secondary-bg);
+  border: 1px solid var(--secondary-border);
+  color: var(--secondary-text);
 }
 
 button.secondary:hover {
-  background: #f5f5f5;
+  background: var(--secondary-hover-bg);
 }
 
 button.destructive {
   background: transparent;
-  border: 1px solid #cc0000;
-  color: #cc0000;
+  border: 1px solid var(--destructive-border);
+  color: var(--destructive-text);
 }
 
 button.destructive:hover {
-  background: #cc0000;
-  color: #fff;
+  background: var(--destructive-hover-bg);
+  color: var(--destructive-hover-text);
 }
 
 .popup {
