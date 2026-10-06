@@ -11,6 +11,7 @@ const reminder10Input = document.getElementById("reminder10Minutes");
 const clearReminder10Button = document.getElementById("clear-reminder10");
 
 const ringSoundSelect = document.getElementById("ringSound");
+const themeModeSelect = document.getElementById("themeMode");
 
 const calculateButton = document.getElementById("calculate");
 const startNowButton = document.getElementById("start-now");
@@ -37,6 +38,7 @@ const DEFAULT_WORK_DURATION_MINUTES = 8 * 60 + 30;
 
 const WORK_DURATION_KEY = "workDurationMinutes";
 const RING_SOUND_KEY = "selectedRingSound";
+const THEME_KEY = "themeMode";
 
 const SOUND_OPTIONS = [
   { value: "src/assets/sounds/ff8-victory-fanfare.ogg", label: "FFVIII Victory fanfare" },
@@ -710,6 +712,14 @@ async function saveSelectedSound(select) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  void loadThemeMode();
+
+  if (themeModeSelect instanceof HTMLSelectElement) {
+    themeModeSelect.addEventListener("change", () => {
+      void saveThemeMode();
+    });
+  }
+
   if (!(ringSoundSelect instanceof HTMLSelectElement)) return;
 
   populateSoundOptions(ringSoundSelect);
@@ -898,4 +908,34 @@ function stopPreviewSound() {
   if (previewRingSoundButton instanceof HTMLButtonElement) {
     previewRingSoundButton.textContent = "Play sound";
   }
+}
+
+function normalizeThemeMode(value) {
+  return value === "dark" ? "dark" : "light";
+}
+
+function applyThemeMode(themeMode) {
+  document.body.dataset.theme = normalizeThemeMode(themeMode);
+}
+
+async function loadThemeMode() {
+  const storedValues = await chrome.storage.local.get(THEME_KEY);
+  const themeMode = normalizeThemeMode(storedValues[THEME_KEY]);
+
+  applyThemeMode(themeMode);
+
+  if (themeModeSelect instanceof HTMLSelectElement) {
+    themeModeSelect.value = themeMode;
+  }
+}
+
+async function saveThemeMode() {
+  if (!(themeModeSelect instanceof HTMLSelectElement)) return;
+
+  const themeMode = normalizeThemeMode(themeModeSelect.value);
+  applyThemeMode(themeMode);
+
+  await chrome.storage.local.set({
+    [THEME_KEY]: themeMode
+  });
 }
