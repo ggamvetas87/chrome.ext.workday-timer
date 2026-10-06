@@ -41,26 +41,26 @@ const RING_SOUND_KEY = "selectedRingSound";
 const THEME_KEY = "themeMode";
 
 const SOUND_OPTIONS = [
-  { value: "src/assets/sounds/ff8-victory-fanfare.ogg", label: "FFVIII Victory fanfare" },
-  { value: "src/assets/sounds/homer-lets-the-barts-out.mp3", label: "Homer Lets the Barts Out" },
-  { value: "src/assets/sounds/mgs-alert.mp3", label: "MGS Alert" },
-  { value: "src/assets/sounds/min-chirodikeite.mp3", label: "Min Chirodikeite" },
-  { value: "src/assets/sounds/outro-song.mp3", label: "Outro Song" },
-  { value: "src/assets/sounds/yeah-boiii-i-i-i.mp3", label: "Yeah Boiii I I I" },
-  { value: "src/assets/sounds/dexter-meme.mp3", label: "Dexter Meme" },
-  { value: "src/assets/sounds/hub-intro-sound.mp3", label: "Hub Intro Sound" },
-  { value: "src/assets/sounds/metal-pipe-clang.mp3", label: "Metal Pipe Clang" },
-  { value: "src/assets/sounds/run-vine-sound-effect.mp3", label: "Run Vine Sound Effect" },
-  { value: "src/assets/sounds/spongebob-fail.mp3", label: "Spongebob Fail" },
-  { value: "src/assets/sounds/stamataaaaaaa.mp3", label: "Stamataaaaaaa" },
-  { value: "src/assets/sounds/taco-bell-bong-sfx.mp3", label: "Taco Bell Bong SFX" },
-  { value: "src/assets/sounds/ti-les-more-maimou-tou-pharao.mp3", label: "Ti Les More Maimou Tou Pharao" },
-  { value: "src/assets/sounds/snoop-dog.mp3", label: "Snoop Dog" },
+  { value: "src/assets/sounds/dexter-meme.mp3", label: "Dexter Intro" },
   { value: "src/assets/sounds/e33-lumiere.mp3", label: "Expedition 33 - Lumiere" },
   { value: "src/assets/sounds/monoco-theme.mp3", label: "Expedition 33 - Monoco theme" },
-  { value: "src/assets/sounds/final-fantasy-vii-victory-fanfare.mp3", label: "FFVII Victory fanfare" },
-  { value: "src/assets/sounds/mgs-rules-of-nature.mp3", label: "MGS - Rules of nature" },
-  { value: "src/assets/sounds/mgs-gameover.mp3", label: "MGS - Gameover" }
+  { value: "src/assets/sounds/final-fantasy-vii-victory-fanfare.mp3", label: "FFVII - Victory fanfare" },
+  { value: "src/assets/sounds/ff8-victory-fanfare.ogg", label: "FFVIII - Victory fanfare" },
+  { value: "src/assets/sounds/homer-lets-the-barts-out.mp3", label: "Homer Lets the Barts Out" },
+  { value: "src/assets/sounds/hub-intro-sound.mp3", label: "Hub Intro Sound" },
+  { value: "src/assets/sounds/mgs-gameover.mp3", label: "MGS - Gameover" },
+  { value: "src/assets/sounds/mgs-alert.mp3", label: "MGS - Alert" },
+  { value: "src/assets/sounds/mgs-rules-of-nature.mp3", label: "MGS - Rules of Nature" },
+  { value: "src/assets/sounds/metal-pipe-clang.mp3", label: "Metal Pipe Clang" },
+  { value: "src/assets/sounds/min-chirodikeite.mp3", label: "Min Chirodikeite" },
+  { value: "src/assets/sounds/run-vine-sound-effect.mp3", label: "Run Vine Sound Effect" },
+  { value: "src/assets/sounds/snoop-dog.mp3", label: "Snoop Dog" },
+  { value: "src/assets/sounds/spongebob-fail.mp3", label: "Spongebob Fail" },
+  { value: "src/assets/sounds/stamataaaaaaa.mp3", label: "Stamataaaaaaa" },
+  { value: "src/assets/sounds/taco-bell-bong-sfx.mp3", label: "Taco Bell Bong" },
+  { value: "src/assets/sounds/thefatrat-xenogenesis.mp3", label: "TheFatRat - Xenogenesis" },
+  { value: "src/assets/sounds/ti-les-more-maimou-tou-pharao.mp3", label: "Ti Les More Maimou Tou Pharao" },
+  { value: "src/assets/sounds/yeah-boiii-i-i-i.mp3", label: "Yeah Boiii I I I" }
 ];
 
 const backButton = document.getElementById("back-button");
