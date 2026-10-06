@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Workday Time Calculator - DEV",
+  "name": "Workday Time Calculator",
   "description": "Calculates your clock-out time and reminds you 30 and 10 minutes beforehand",
   "version": "2.0.0",
   "permissions": [
@@ -15,7 +15,7 @@
   },
   "action": {
     "default_popup": "src/popup/popup.html",
-    "default_title": "Workday Time Calculator - DEV",
+    "default_title": "Workday Time Calculator",
     "default_icon": {
       "128": "src/assets/img/icon128.png"
     }
@@ -24,12 +24,12 @@
     "service_worker": "src/background/background.js"
   },
   "host_permissions": [
-    "https://<HRMS_HUB_URL>/*"
+    "https://hrms.mycompany.com/*"
   ],
   "content_scripts": [
     {
       "matches": [
-        "https://<HRMS_HUB_URL>/*"
+        "https://hrms.mycompany.com/*"
       ],
       "js": [
         "src/content/hrmsHub.js"
