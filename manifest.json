@@ -24,12 +24,12 @@
     "service_worker": "src/background/background.js"
   },
   "host_permissions": [
-    "https://hrms.mycomany.com/*"
+    "https://hrms.mycompany.com/*"
   ],
   "content_scripts": [
     {
       "matches": [
-        "https://hrms.mycomany.com/*"
+        "https://hrms.mycompany.com/*"
       ],
       "js": [
         "src/content/hrmsHub.js"
