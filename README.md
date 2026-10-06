@@ -100,6 +100,26 @@ The extension can also interact with your Company's HRHub page:
 - The extension must be reloaded after manifest changes.
 - The HRHub page must be refreshed after installing the content script.
 
+## Installation
+
+### Install the extension in Chrome
+
+1. Clone or download this repository to your machine.
+2. Open Chrome and go to `chrome://extensions/`.
+3. Enable **Developer mode** in the top-right corner.
+4. Click **Load unpacked**.
+5. Select the project folder:
+   - `chrome.ext.workday-timer`
+6. The extension will appear in Chrome and can now be used from the extensions menu.
+
+### Update the extension after changes
+
+If you make changes to the code:
+
+1. Go to `chrome://extensions/`
+2. Click **Reload** on the extension
+3. Refresh any open tabs where the extension is used
+
 ### Screenshots
 
 ![chrome-ext-workday-time-1](docs/screenshots/chrome-ext-workday-time-1.png "chrome-ext-workday-time-1")
